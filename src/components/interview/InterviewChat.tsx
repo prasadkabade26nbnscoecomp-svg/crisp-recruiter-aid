@@ -7,17 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  Send, 
-  Mic, 
-  MicOff, 
-  Camera, 
-  CameraOff, 
-  Play, 
-  Pause,
-  Clock,
-  CheckCircle
-} from 'lucide-react';
+import { Send, Mic, MicOff, Camera, CameraOff, Play, Pause, Clock, CircleCheck as CheckCircle } from 'lucide-react';
 import { 
   updateCurrentAnswer, 
   setRecordingMode, 
@@ -500,24 +490,21 @@ const InterviewChat = ({ stage, onStartInterview, onCompleteInterview }: Intervi
                 </Button>
               ) : recordingMode === 'text' ? (
                 <>
-                  <div className="flex flex-col gap-2 flex-1">
-                    <textarea
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      placeholder="Type your detailed answer here..."
-                      disabled={isLoading}
-                      className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
-                      rows={4}
-                    />
-                    <Button 
-                      onClick={handleSendMessage}
-                      disabled={!inputValue.trim() || isLoading}
-                      className="self-end"
-                    >
-                      <Send className="h-4 w-4 mr-2" />
-                      Submit Answer
-                    </Button>
-                  </div>
+                  <Input
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Type your answer..."
+                    onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
+                    disabled={isLoading}
+                    className="min-h-[100px]"
+                    as="textarea"
+                  />
+                  <Button 
+                    onClick={handleSendMessage}
+                    disabled={!inputValue.trim() || isLoading}
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
                 </>
               ) : (
                 <div className="flex-1 flex items-center justify-center">

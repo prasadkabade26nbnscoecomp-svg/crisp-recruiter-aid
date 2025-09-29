@@ -12,18 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Users, 
-  TrendingUp, 
-  Clock, 
-  Award, 
-  Search, 
-  Filter,
-  LogOut,
-  Eye,
-  Download,
-  BarChart3
-} from 'lucide-react';
+import { Users, TrendingUp, Clock, Award, Search, Filter, LogOut, Eye, Download, ChartBar as BarChart3 } from 'lucide-react';
 import { logout } from '@/store/slices/authSlice';
 import { useToast } from '@/hooks/use-toast';
 
