@@ -14,6 +14,7 @@ import QuestionTimer from '@/components/interview/QuestionTimer';
 import WelcomeBackModal from '@/components/interview/WelcomeBackModal';
 import { clearCurrentCandidate } from '@/store/slices/candidateSlice';
 import { clearCurrentSession } from '@/store/slices/interviewSlice';
+import { resumeParser } from '@/services/resumeParser';
 
 const InterviewPage = () => {
   const navigate = useNavigate();
@@ -111,12 +112,29 @@ const InterviewPage = () => {
                 <CardTitle className="text-2xl">Upload Your Resume</CardTitle>
                 <Alert>
                   <AlertDescription>
-                    Please upload your resume in PDF or DOCX format. Our AI will extract your contact information to get started.
+                    Please upload your resume in PDF or DOCX format. Our AI will extract your contact information and start the interview automatically.
                   </AlertDescription>
                 </Alert>
               </CardHeader>
               <CardContent>
-                <ResumeUpload onComplete={() => setInterviewStage('profile')} />
+                <ResumeUpload onComplete={() => {
+                  if (currentCandidate) {
+                    const validation = resumeParser.validateRequiredFields({
+                      name: currentCandidate.name,
+                      email: currentCandidate.email,
+                      phone: currentCandidate.phone,
+                      content: ''
+                    });
+                    
+                    if (validation.isValid) {
+                      setInterviewStage('interview');
+                    } else {
+                      setInterviewStage('profile');
+                    }
+                  } else {
+                    setInterviewStage('profile');
+                  }
+                }} />
               </CardContent>
             </Card>
           </div>

@@ -52,7 +52,7 @@ const LandingPage = () => {
               variant="outline"
               onClick={() => navigate('/results')}
             >
-              View Results
+              View My Results
             </Button>
           </div>
         </div>

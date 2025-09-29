@@ -73,10 +73,19 @@ const ResumeUpload = ({ onComplete }: ResumeUploadProps) => {
 
       dispatch(setCurrentCandidate(candidateProfile));
 
-      toast({
-        title: "Resume Uploaded Successfully",
-        description: "Your resume has been processed. Please complete your profile.",
-      });
+      const validation = resumeParser.validateRequiredFields(data);
+      
+      if (validation.isValid) {
+        toast({
+          title: "Resume Processed Successfully",
+          description: "All information extracted. Starting interview...",
+        });
+      } else {
+        toast({
+          title: "Resume Uploaded Successfully",
+          description: "Some information is missing. Please complete your profile.",
+        });
+      }
 
       // Wait a moment before proceeding
       setTimeout(() => {
