@@ -2,41 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* AI Interview Assistant Design System - Professional & Modern */
 
 @layer base {
   :root {
+    /* Core Brand Colors */
+    --primary: 221 83% 53%;           /* Professional Blue #2563eb */
+    --primary-foreground: 210 40% 98%;
+    --primary-light: 221 83% 65%;     /* Lighter blue for hovers */
+    --primary-dark: 221 83% 40%;      /* Darker blue for depth */
+    
+    /* Interview State Colors */
+    --success: 142 76% 36%;           /* Green for completed */
+    --success-foreground: 210 40% 98%;
+    --warning: 38 92% 50%;            /* Orange for timer warnings */
+    --warning-foreground: 222.2 84% 4.9%;
+    --error: 0 84% 60%;               /* Red for errors */
+    --error-foreground: 210 40% 98%;
+    
+    /* UI Foundation */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
+    
+    /* Secondary Colors */
+    --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
+    --muted: 210 40% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
+    --accent: 210 40% 96%;
     --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
+    
+    /* Chat Interface */
+    --chat-bg: 240 10% 98%;           /* Light chat background */
+    --chat-user: 221 83% 53%;         /* User message bubble */
+    --chat-ai: 210 40% 96%;           /* AI message bubble */
+    --chat-border: 214.3 31.8% 91.4%;
+    
+    /* Dashboard Colors */
+    --dashboard-bg: 0 0% 99%;         /* Dashboard background */
+    --dashboard-card: 0 0% 100%;      /* Card backgrounds */
+    --dashboard-accent: 221 83% 53%;  /* Accent elements */
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(142 76% 45%));
+    --gradient-warning: linear-gradient(135deg, hsl(var(--warning)), hsl(38 92% 60%));
+    --gradient-chat: linear-gradient(180deg, hsl(var(--chat-bg)), hsl(240 10% 96%));
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(var(--primary) / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(var(--primary) / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(var(--primary) / 0.1);
+    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.2);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Borders & Input */
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+    --ring: 221 83% 53%;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
