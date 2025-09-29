@@ -67,7 +67,8 @@ const ResumeUpload = ({ onComplete }: ResumeUploadProps) => {
         name: data.name || '',
         email: data.email || '',
         phone: data.phone || '',
-        resumeFile: file,
+        resumeFileName: file.name,
+        resumeContent: data.content,
         createdAt: Date.now(),
       };
 

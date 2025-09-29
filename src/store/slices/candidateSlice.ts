@@ -6,7 +6,8 @@ export interface CandidateProfile {
   name: string;
   email: string;
   phone: string;
-  resumeFile?: File;
+  resumeFileName?: string;
+  resumeContent?: string;
   createdAt: number;
 }
 
