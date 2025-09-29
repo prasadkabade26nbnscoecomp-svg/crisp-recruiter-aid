@@ -58,6 +58,9 @@ const InterviewChat = ({ stage, onStartInterview, onCompleteInterview }: Intervi
   const [currentQuestionStartTime, setCurrentQuestionStartTime] = useState<number>(0);
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+  const [isAnswerStarted, setIsAnswerStarted] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -330,19 +333,65 @@ const InterviewChat = ({ stage, onStartInterview, onCompleteInterview }: Intervi
   };
 
   const toggleRecording = () => {
-    dispatch(setIsRecording(!isRecording));
     if (!isRecording) {
-      // Start recording logic would go here
+      startVoiceRecording();
+    } else {
+      stopVoiceRecording();
+    }
+  };
+
+  const startVoiceRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks: Blob[] = [];
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        const audioBlob = new Blob(chunks, { type: 'audio/wav' });
+        // Convert audio to text (simplified - in real app you'd use speech-to-text API)
+        setInputValue("Voice answer recorded - processing...");
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      recorder.start();
+      setMediaRecorder(recorder);
+      setAudioChunks(chunks);
+      dispatch(setIsRecording(true));
+      
       toast({
         title: "Recording Started",
         description: "Speak your answer clearly. Click the mic again to stop.",
       });
-    } else {
-      // Stop recording logic would go here
+    } catch (error) {
+      toast({
+        title: "Recording Error",
+        description: "Unable to access microphone. Please use text input.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const stopVoiceRecording = () => {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+      dispatch(setIsRecording(false));
       toast({
         title: "Recording Stopped",
         description: "Processing your voice answer...",
       });
+    }
+  };
+
+  const handleStartAnswer = () => {
+    setIsAnswerStarted(true);
+    if (recordingMode === 'voice') {
+      startVoiceRecording();
     }
   };
 
@@ -440,21 +489,35 @@ const InterviewChat = ({ stage, onStartInterview, onCompleteInterview }: Intervi
 
             {/* Input Controls */}
             <div className="flex gap-2">
-              {recordingMode === 'text' ? (
+              {!isAnswerStarted ? (
+                <Button 
+                  onClick={handleStartAnswer}
+                  className="flex-1 bg-gradient-primary text-primary-foreground"
+                  disabled={isLoading}
+                >
+                  <Play className="h-5 w-5 mr-2" />
+                  Start Answer
+                </Button>
+              ) : recordingMode === 'text' ? (
                 <>
-                  <Input
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    placeholder="Type your answer..."
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    disabled={isLoading}
-                  />
-                  <Button 
-                    onClick={handleSendMessage}
-                    disabled={!inputValue.trim() || isLoading}
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
+                  <div className="flex flex-col gap-2 flex-1">
+                    <textarea
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      placeholder="Type your detailed answer here..."
+                      disabled={isLoading}
+                      className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                      rows={4}
+                    />
+                    <Button 
+                      onClick={handleSendMessage}
+                      disabled={!inputValue.trim() || isLoading}
+                      className="self-end"
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      Submit Answer
+                    </Button>
+                  </div>
                 </>
               ) : (
                 <div className="flex-1 flex items-center justify-center">
@@ -479,6 +542,14 @@ const InterviewChat = ({ stage, onStartInterview, onCompleteInterview }: Intervi
                 </div>
               )}
             </div>
+
+            {isAnswerStarted && (
+              <div className="flex justify-center">
+                <Button variant="outline" onClick={() => setIsAnswerStarted(false)}>
+                  Reset Answer
+                </Button>
+              </div>
+            )}
 
             {stage === 'interview' && currentSession && (
               <Alert>

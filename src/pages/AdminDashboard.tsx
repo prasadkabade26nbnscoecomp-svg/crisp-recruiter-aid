@@ -161,13 +161,19 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Interviews</CardTitle>
+              <CardTitle className="text-sm font-medium">Today's Interviews</CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
+              <div className="text-2xl font-bold">
+                {completedInterviews.filter(interview => {
+                  const today = new Date();
+                  const interviewDate = new Date(interview.endTime);
+                  return interviewDate.toDateString() === today.toDateString();
+                }).length}
+              </div>
               <p className="text-xs text-muted-foreground">
-                Currently in progress
+                Completed today
               </p>
             </CardContent>
           </Card>
@@ -284,21 +290,21 @@ const AdminDashboard = () => {
                                       <Eye className="h-4 w-4" />
                                     </Button>
                                   </DialogTrigger>
-                                  <DialogContent className="max-w-4xl max-h-[80vh]">
+                                  <DialogContent className="max-w-6xl max-h-[90vh]">
                                     <DialogHeader>
                                       <DialogTitle>
                                         Interview Details - {candidate?.name}
                                       </DialogTitle>
                                     </DialogHeader>
                                     {selectedCandidate && (
-                                      <ScrollArea className="max-h-[60vh]">
+                                      <ScrollArea className="max-h-[70vh]">
                                         <div className="space-y-4">
                                           {/* Candidate Info */}
                                           <Card>
                                             <CardHeader>
                                               <CardTitle>Candidate Information</CardTitle>
                                             </CardHeader>
-                                            <CardContent className="grid md:grid-cols-2 gap-4">
+                                            <CardContent className="grid md:grid-cols-3 gap-4">
                                               <div>
                                                 <strong>Name:</strong> {selectedCandidate.candidate?.name}
                                               </div>
@@ -307,6 +313,18 @@ const AdminDashboard = () => {
                                               </div>
                                               <div>
                                                 <strong>Phone:</strong> {selectedCandidate.candidate?.phone}
+                                              </div>
+                                              <div>
+                                                <strong>Total Score:</strong> 
+                                                <span className={`ml-2 font-bold ${getScoreColor(Math.round((selectedCandidate.interview.totalScore / 600) * 100))}`}>
+                                                  {selectedCandidate.interview.totalScore}/600
+                                                </span>
+                                              </div>
+                                              <div>
+                                                <strong>Performance:</strong>
+                                                <Badge className="ml-2" variant={getScoreVariant(Math.round((selectedCandidate.interview.totalScore / 600) * 100))}>
+                                                  {Math.round((selectedCandidate.interview.totalScore / 600) * 100)}%
+                                                </Badge>
                                               </div>
                                               <div>
                                                 <strong>Interview Date:</strong> {new Date(selectedCandidate.interview.endTime).toLocaleString()}

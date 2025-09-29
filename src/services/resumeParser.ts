@@ -48,18 +48,45 @@ export class ResumeParser {
   }
 
   private extractDataFromText(text: string): ParsedResumeData {
-    const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/;
-    const phoneRegex = /(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/;
-    const nameRegex = /^([A-Z][a-z]+ [A-Z][a-z]+)/m;
+    // Enhanced regex patterns for better extraction
+    const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+    const phoneRegex = /(?:\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})|(?:\+91[-.\s]?)?[6-9]\d{9}/g;
+    const nameRegex = /(?:^|\n)([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)(?:\n|$)/m;
+    
+    // Try multiple patterns for name extraction
+    const namePatterns = [
+      /(?:^|\n)([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)(?:\n|$)/m,
+      /^([A-Z][A-Z\s]+)$/m,
+      /Name[:\s]+([A-Za-z\s]+)/i,
+      /^([A-Z][a-z]+\s+[A-Z][a-z]+)/m
+    ];
 
-    const email = text.match(emailRegex)?.[0];
-    const phone = text.match(phoneRegex)?.[0];
-    const name = text.match(nameRegex)?.[0];
+    // Extract email
+    const emailMatches = text.match(emailRegex);
+    const email = emailMatches?.[0];
+    
+    // Extract phone
+    const phoneMatches = text.match(phoneRegex);
+    const phone = phoneMatches?.[0];
+    
+    // Extract name using multiple patterns
+    let name = null;
+    for (const pattern of namePatterns) {
+      const match = text.match(pattern);
+      if (match && match[1]) {
+        name = match[1].trim();
+        break;
+      }
+    }
+    
+    // Clean up extracted data
+    const cleanedName = name ? name.replace(/[^\w\s]/g, '').trim() : undefined;
+    const cleanedPhone = phone ? phone.replace(/[^\d+]/g, '') : undefined;
 
     return {
-      name,
+      name: cleanedName,
       email,
-      phone,
+      phone: cleanedPhone,
       content: text
     };
   }
